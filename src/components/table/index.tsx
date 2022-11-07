@@ -8,7 +8,8 @@ import {
   Thead,
   Tr,
   useColorModeValue,
-  Button
+  Box,
+  Button,
 } from "@chakra-ui/react";
 import React, { useMemo } from "react";
 import {
@@ -17,6 +18,9 @@ import {
   useSortBy,
   useTable,
 } from "react-table";
+
+//icon
+import { MdDelete, MdModeEditOutline } from "react-icons/md";
 
 // Custom components
 import Card from "components/card/Card";
@@ -31,7 +35,7 @@ export default function DataTable(props: {
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
-
+  console.log(data);
   const tableInstance = useTable(
     {
       columns,
@@ -50,10 +54,12 @@ export default function DataTable(props: {
     prepareRow,
     initialState,
   } = tableInstance;
-  initialState.pageSize = 5;
+
+  initialState.pageSize = 10;
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   const borderColor = useColorModeValue("gray.200", "whiteAlpha.100");
+
   return (
     <Card
       flexDirection="column"
@@ -72,7 +78,6 @@ export default function DataTable(props: {
           {title}
         </Text>
         {/* <Menu /> */}
-        <Button variant="brand">Tạo tài khoản</Button>
       </Flex>
       <Table {...getTableProps()} variant="simple" color="gray.500" mb="24px">
         <Thead>
@@ -103,34 +108,32 @@ export default function DataTable(props: {
             prepareRow(row);
             return (
               <Tr {...row.getRowProps()} key={index}>
-                {row.cells.map((cell, index) => {
+                {row.cells.map((cell: any, index) => {
                   let data;
-                  if (cell.column.Header === "NAME") {
+                  if (cell.column.id === "action") {
                     data = (
                       <Flex align="center">
-                        <Text color={textColor} fontSize="sm" fontWeight="700">
-                          {cell.value}
-                        </Text>
+                        <Button display="flex" alignItems="center">
+                          <MdDelete style={{ color: "red" }} />
+                          <Text
+                            color={textColor}
+                            fontSize="sm"
+                            fontWeight="700"
+                          >
+                            Xóa
+                          </Text>
+                        </Button>
+                        <Button display="flex" alignItems="center">
+                          <MdModeEditOutline style={{ color: "green" }} />
+                          <Text
+                            color={textColor}
+                            fontSize="sm"
+                            fontWeight="700"
+                          >
+                            Cập nhật
+                          </Text>
+                        </Button>
                       </Flex>
-                    );
-                  } else if (cell.column.Header === "PROGRESS") {
-                    data = (
-                      <Flex align="center">
-                        <Text
-                          me="10px"
-                          color={textColor}
-                          fontSize="sm"
-                          fontWeight="700"
-                        >
-                          {cell.value}%
-                        </Text>
-                      </Flex>
-                    );
-                  } else if (cell.column.Header === "QUANTITY") {
-                    data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
-                        {cell.value}
-                      </Text>
                     );
                   } else if (cell.column.Header === "DATE") {
                     data = (
@@ -138,7 +141,16 @@ export default function DataTable(props: {
                         {cell.value}
                       </Text>
                     );
+                  } else {
+                    data = (
+                      <Flex align="center">
+                        <Text color={textColor} fontSize="sm" fontWeight="700">
+                          {cell.value}
+                        </Text>
+                      </Flex>
+                    );
                   }
+
                   return (
                     <Td
                       {...cell.getCellProps()}

@@ -25,7 +25,7 @@ import navImage from 'assets/img/layout/Navbar.png';
 import { MdNotificationsNone, MdInfoOutline } from 'react-icons/md';
 import { IoMdMoon, IoMdSunny } from 'react-icons/io';
 import { FaEthereum } from 'react-icons/fa';
-import routes from 'routes';
+import {adminRoutes} from 'routes';
 export default function HeaderLinks(props: { secondary: boolean }) {
 	const { secondary } = props;
 	const { colorMode, toggleColorMode } = useColorMode();
@@ -82,7 +82,7 @@ export default function HeaderLinks(props: { secondary: boolean }) {
 					</Text>
 				</Text>
 			</Flex>
-			<SidebarResponsive routes={routes} />
+			<SidebarResponsive routes={adminRoutes} />
 			<Menu>
 				<MenuButton p='0px'>
 					<Icon mt='6px' as={MdNotificationsNone} color={navbarIcon} w='18px' h='18px' me='10px' />
