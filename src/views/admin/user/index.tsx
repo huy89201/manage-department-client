@@ -14,6 +14,7 @@ import { useQuery, gql } from "@apollo/client";
 import { useDisclosure } from "@chakra-ui/react";
 import Pagination from "@mui/material/Pagination";
 import { useState } from "react";
+import { AddNewUserView } from "./addview";
 
 const GET_USERS = gql`
   query {
@@ -92,23 +93,10 @@ export default function UserPage() {
         Tạo tài khoản
       </Button>
       <Box>
-        <DataTable columnsData={columns} tableData={data.users} />
+        <DataTable columnsData={columns} tableData={data.users ?? []} />
         {/* <Pagination count={11} page={page} onChange={handleChangePage} /> */}
       </Box>
-      <Modal isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>{/* <Lorem count={2} /> */}</ModalBody>
-          <ModalFooter>
-            <Button colorScheme="brand" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button variant="ghost">Secondary Action</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      <AddNewUserView isOpen={isOpen} onClose={onClose} />
     </Box>
   );
 }

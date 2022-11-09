@@ -35,7 +35,7 @@ export default function DataTable(props: {
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
-  console.log(data);
+  
   const tableInstance = useTable(
     {
       columns,
