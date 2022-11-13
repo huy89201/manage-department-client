@@ -14,6 +14,7 @@ import Profile from "views/admin/profile";
 import DataTables from "views/admin/dataTables";
 import RTL from "views/admin/rtl";
 import UserPage from "views/admin/user";
+import { UserForm } from "views/admin/user/userForm";
 
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
@@ -104,6 +105,13 @@ export const adminRoutes = [
     name: "Quản lý tài khoản",
     layout: "/admin",
     path: "/user",
+    icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+    component: UserPage,
+  },
+  {
+    name: "Quản lý tài khoản",
+    layout: "/admin",
+    path: "/user/add",
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     component: UserPage,
   },

@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import { useFormik } from "formik";
+import { ADD_USER, GET_USERS } from "service/user";
 
 import {
   Modal,
@@ -16,69 +16,62 @@ import {
   FormLabel,
   Select,
 } from "@chakra-ui/react";
+import { User } from "interfaces";
+import { useState, useEffect } from "react";
 
 interface Props {
   isOpen: boolean;
   onClose: any;
   initialValues?: any;
+  isEdit?: boolean;
+  user?: User;
 }
 
-const ADD_USER = gql`
-  mutation createUser(
-    $userName: String!
-    $fullName: String!
-    $email: String!
-    $password: String!
-    $role: String!
-    $address: String
-    $phone: String
-    $birthday: DateTime
-    $gender: String
-  ) {
-    createUser(
-      createUserInput: {
-        userName: $userName
-        fullName: $fullName
-        email: $email
-        password: $password
-        role: $role
-        address: $address
-        phone: $phone
-        birthday: $birthday
-        gender: $gender
-      }
-    ) {
-      _id
-      userName
-      fullName
-      email
-      password
-    }
-  }
-`;
+export function UserForm({ isOpen, onClose, isEdit, user }: Props) {
+  const [editUser, setEditUser] = useState<any>();
 
-export function AddNewUserView({ isOpen, onClose }: Props) {
-  const [createUser, { data, loading, error }] = useMutation(ADD_USER);
+  const [createUser] = useMutation(ADD_USER, {
+    refetchQueries: [{ query: GET_USERS }],
+  });
+
+  const emptyValues = {
+    userName: "",
+    fullName: "",
+    email: "",
+    password: "",
+    role: "",
+    address: "",
+    phone: "",
+    birthday: "",
+    gender: "",
+  };
 
   const formik = useFormik({
-    initialValues: {
-      userName: "",
-      fullName: "",
-      email: "",
-      password: "",
-      role: "",
-      address: "",
-      phone: "",
-      birthday: "",
-      gender: "",
-    },
+    initialValues: editUser ?? emptyValues,
     onSubmit: (values) => {
-      console.log(values);
       createUser({
         variables: { ...values },
       });
+      onClose();
     },
   });
+
+  useEffect(() => {
+    setEditUser({
+      userName: user?.userName,
+      fullName: user?.fullName,
+      email: user?.email,
+      password: user?.password,
+      role: user?.role,
+      address: user?.address,
+      phone: user?.phone,
+      birthday: user?.birthday,
+      gender: user?.gender,
+      // ...user,
+    });
+  }, [user]);
+
+  // console.log(editUser);
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
@@ -106,6 +99,7 @@ export function AddNewUserView({ isOpen, onClose }: Props) {
                 name="fullName"
                 onChange={formik.handleChange}
                 value={formik.values.fullName}
+                // defaultValue="123 456"
               />
             </FormControl>
             <FormControl>
@@ -159,7 +153,7 @@ export function AddNewUserView({ isOpen, onClose }: Props) {
                 placeholder="Chọn chức vụ"
                 id="role"
                 onChange={formik.handleChange}
-                value={formik.values.role}
+                value={formik.values?.role}
               >
                 <option value="admin">Quản lý</option>
                 <option value="teacher">Giáo viên</option>

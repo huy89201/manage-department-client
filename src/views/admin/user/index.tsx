@@ -1,45 +1,15 @@
-import {
-  Box,
-  Button,
-  Modal,
-  ModalBody,
-  ModalCloseButton,
-  ModalContent,
-  ModalFooter,
-  ModalHeader,
-  ModalOverlay,
-} from "@chakra-ui/react";
-import DataTable from "components/table";
-import { useQuery, gql } from "@apollo/client";
-import { useDisclosure } from "@chakra-ui/react";
-import Pagination from "@mui/material/Pagination";
 import { useState } from "react";
-import { AddNewUserView } from "./addview";
-
-const GET_USERS = gql`
-  query {
-    users(skip: 0, take: 10) {
-      _id
-      userName
-      fullName
-      email
-      password
-      role
-      address
-      phone
-      gender
-      birthday
-      createdAt
-      updatedAt
-    }
-    userCount
-  }
-`;
+import { Box, Button } from "@chakra-ui/react";
+import DataTable from "components/table";
+import { useQuery, useLazyQuery } from "@apollo/client";
+import { useDisclosure } from "@chakra-ui/react";
+import { UserForm } from "./userForm";
+import { GET_USERS, GET_USER_BY_ID } from "service/user";
+// import Pagination from "@mui/material/Pagination";
 
 export default function UserPage() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [page, setPage] = useState(1);
-  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [editUser, setEditUser] = useState();
 
   const columns = [
     {
@@ -77,15 +47,19 @@ export default function UserPage() {
   ];
 
   const { loading, error, data } = useQuery(GET_USERS);
-
-  const handleChangePage = (
-    event: React.ChangeEvent<unknown>,
-    value: number
-  ) => {
-    setPage(value);
-  };
+  const [getUserById, lazyResults] = useLazyQuery(GET_USER_BY_ID);
 
   if (loading) return <h1>loading....</h1>;
+
+  const openFormAsEdit = async (id: String) => {
+    onOpen();
+    try {
+      await getUserById({ variables: { _id: id } });
+      setEditUser(lazyResults?.data?.user);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
@@ -93,10 +67,13 @@ export default function UserPage() {
         Tạo tài khoản
       </Button>
       <Box>
-        <DataTable columnsData={columns} tableData={data.users ?? []} />
-        {/* <Pagination count={11} page={page} onChange={handleChangePage} /> */}
+        <DataTable
+          columnsData={columns}
+          tableData={data.users ?? []}
+          openForm={openFormAsEdit}
+        />
       </Box>
-      <AddNewUserView isOpen={isOpen} onClose={onClose} />
+      <UserForm isOpen={isOpen} onClose={onClose} user={editUser} />
     </Box>
   );
 }

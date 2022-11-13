@@ -1,3 +1,8 @@
+import { useMemo } from "react";
+import { MdDelete, MdModeEditOutline } from "react-icons/md";
+import Card from "components/card/Card";
+import { DELETE_USER, GET_USERS } from "service/user";
+import { useMutation, useLazyQuery } from "@apollo/client";
 import {
   Flex,
   Table,
@@ -8,10 +13,8 @@ import {
   Thead,
   Tr,
   useColorModeValue,
-  Box,
   Button,
 } from "@chakra-ui/react";
-import React, { useMemo } from "react";
 import {
   useGlobalFilter,
   usePagination,
@@ -19,23 +22,61 @@ import {
   useTable,
 } from "react-table";
 
-//icon
-import { MdDelete, MdModeEditOutline } from "react-icons/md";
+function ActionCells(props: { row: any; openForm: any }) {
+  const { row, openForm } = props;
 
-// Custom components
-import Card from "components/card/Card";
-import Menu from "components/menu/MainMenu";
+  const [removeUser, { data, loading, error }] = useMutation(DELETE_USER, {
+    refetchQueries: [{ query: GET_USERS }],
+  });
+
+  const handleOpenForm = () => {
+    openForm(row.original?._id);
+  };
+
+  const textColor = useColorModeValue("secondaryGray.900", "white");
+  return (
+    <Flex align="center">
+      <Button display="flex" alignItems="center">
+        <MdDelete style={{ color: "red" }} />
+        <Text
+          color={textColor}
+          fontSize="sm"
+          fontWeight="700"
+          onClick={() =>
+            removeUser({
+              variables: { _id: row.original?._id },
+            })
+          }
+        >
+          Xóa
+        </Text>
+      </Button>
+      <Button display="flex" alignItems="center">
+        <MdModeEditOutline style={{ color: "green" }} />
+        <Text
+          color={textColor}
+          fontSize="sm"
+          fontWeight="700"
+          onClick={handleOpenForm}
+        >
+          Cập nhật
+        </Text>
+      </Button>
+    </Flex>
+  );
+}
 
 export default function DataTable(props: {
   columnsData: any;
   tableData: any;
   title?: string;
+  openForm: any;
 }) {
-  const { columnsData, tableData, title } = props;
+  const { columnsData, tableData, title, openForm } = props;
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
-  
+
   const tableInstance = useTable(
     {
       columns,
@@ -111,30 +152,7 @@ export default function DataTable(props: {
                 {row.cells.map((cell: any, index) => {
                   let data;
                   if (cell.column.id === "action") {
-                    data = (
-                      <Flex align="center">
-                        <Button display="flex" alignItems="center">
-                          <MdDelete style={{ color: "red" }} />
-                          <Text
-                            color={textColor}
-                            fontSize="sm"
-                            fontWeight="700"
-                          >
-                            Xóa
-                          </Text>
-                        </Button>
-                        <Button display="flex" alignItems="center">
-                          <MdModeEditOutline style={{ color: "green" }} />
-                          <Text
-                            color={textColor}
-                            fontSize="sm"
-                            fontWeight="700"
-                          >
-                            Cập nhật
-                          </Text>
-                        </Button>
-                      </Flex>
-                    );
+                    data = <ActionCells row={row} openForm={openForm} />;
                   } else if (cell.column.Header === "DATE") {
                     data = (
                       <Text color={textColor} fontSize="sm" fontWeight="700">
