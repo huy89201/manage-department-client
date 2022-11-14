@@ -108,13 +108,6 @@ export const adminRoutes = [
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     component: UserPage,
   },
-  {
-    name: "Quản lý tài khoản",
-    layout: "/admin",
-    path: "/user/add",
-    icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
-    component: UserPage,
-  },
 ];
 
 export const authRoutes = [

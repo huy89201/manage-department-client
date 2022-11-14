@@ -1,15 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, Button } from "@chakra-ui/react";
 import DataTable from "components/table";
 import { useQuery, useLazyQuery } from "@apollo/client";
 import { useDisclosure } from "@chakra-ui/react";
 import { UserForm } from "./userForm";
 import { GET_USERS, GET_USER_BY_ID } from "service/user";
+import { Spinner } from "@chakra-ui/react";
 // import Pagination from "@mui/material/Pagination";
-
 export default function UserPage() {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [editUser, setEditUser] = useState();
+  const [isEdit, setIsEdit] = useState(false);
 
   const columns = [
     {
@@ -49,21 +49,27 @@ export default function UserPage() {
   const { loading, error, data } = useQuery(GET_USERS);
   const [getUserById, lazyResults] = useLazyQuery(GET_USER_BY_ID);
 
-  if (loading) return <h1>loading....</h1>;
+  if (loading) return <div>loading....</div>;
 
   const openFormAsEdit = async (id: String) => {
-    onOpen();
     try {
+      onOpen();
       await getUserById({ variables: { _id: id } });
-      setEditUser(lazyResults?.data?.user);
+      setIsEdit(true);
     } catch (error) {
       console.log(error);
     }
   };
 
+  const openFormAsAdd = () => {
+    setIsEdit(false);
+    onOpen();
+  };
+
+  console.log(isEdit);
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
-      <Button variant="brand" mb={"10px"} onClick={onOpen}>
+      <Button variant="brand" mb={"10px"} onClick={openFormAsAdd}>
         Tạo tài khoản
       </Button>
       <Box>
@@ -73,7 +79,16 @@ export default function UserPage() {
           openForm={openFormAsEdit}
         />
       </Box>
-      <UserForm isOpen={isOpen} onClose={onClose} user={editUser} />
+      {lazyResults.loading ? (
+        <Spinner />
+      ) : (
+        <UserForm
+          isOpen={isOpen}
+          onClose={onClose}
+          user={lazyResults?.data?.user}
+          isEdit={isEdit}
+        />
+      )}
     </Box>
   );
 }
