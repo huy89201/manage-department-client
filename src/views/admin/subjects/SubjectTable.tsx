@@ -1,9 +1,8 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { MdDelete, MdModeEditOutline } from "react-icons/md";
 import Card from "components/card/Card";
-import { DELETE_USER, GET_USERS } from "service/user";
 import { GET_SUBJECTS, DELETE_SUBJECT } from "service/subject";
-import { useMutation, useLazyQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 import {
   Flex,
   Table,
@@ -25,9 +24,8 @@ import {
 
 function ActionCells(props: { row: any; openForm: any }) {
   const { row, openForm } = props;
-
-  const [removeUser, { data, loading, error }] = useMutation(DELETE_USER, {
-    refetchQueries: [{ query: GET_USERS }],
+  const [removeSubject, { data, loading, error }] = useMutation(DELETE_SUBJECT, {
+    refetchQueries: [{ query: GET_SUBJECTS }],
   });
 
   const handleOpenForm = () => {
@@ -44,7 +42,7 @@ function ActionCells(props: { row: any; openForm: any }) {
           fontSize="sm"
           fontWeight="700"
           onClick={() =>
-            removeUser({
+            removeSubject({
               variables: { _id: row.original?._id },
             })
           }
@@ -67,7 +65,7 @@ function ActionCells(props: { row: any; openForm: any }) {
   );
 }
 
-export default function DataTable(props: {
+export default function SubjectTable(props: {
   columnsData: any;
   tableData: any;
   title?: string;

@@ -4,7 +4,7 @@ import {
   MdPerson,
   MdHome,
   MdLock,
-  MdOutlineShoppingCart,
+  MdBook
 } from "react-icons/md";
 
 // Admin Imports
@@ -18,6 +18,7 @@ import { UserForm } from "views/admin/user/userForm";
 
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
+import SubjectPage from "views/admin/subjects";
 
 const routes = [
   {
@@ -107,6 +108,13 @@ export const adminRoutes = [
     path: "/user",
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
     component: UserPage,
+  },
+  {
+    name: "Quản lý môn học",
+    layout: "/admin",
+    path: "/subject",
+    icon: <Icon as={MdBook} width="20px" height="20px" color="inherit" />,
+    component: SubjectPage,
   },
 ];
 

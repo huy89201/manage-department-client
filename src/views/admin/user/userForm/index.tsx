@@ -16,7 +16,6 @@ import {
   FormLabel,
   Select,
 } from "@chakra-ui/react";
-import { useState, useEffect } from "react";
 
 interface Props {
   isOpen: boolean;
@@ -55,10 +54,6 @@ export function UserForm({ isOpen, onClose, isEdit, user }: Props) {
     },
   });
 
-  // console.log(formik.initialValues);
-  console.log(isEdit ? user : emptyValues);
-
-
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
@@ -85,7 +80,6 @@ export function UserForm({ isOpen, onClose, isEdit, user }: Props) {
                 name="fullName"
                 onChange={formik.handleChange}
                 value={formik?.values?.fullName}
-                // defaultValue="123 456"
               />
             </FormControl>
             <FormControl>
