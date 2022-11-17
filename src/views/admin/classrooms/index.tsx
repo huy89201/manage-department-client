@@ -1,43 +1,20 @@
 import { useState, useEffect } from "react";
 import { Box, Button } from "@chakra-ui/react";
-import DataTable from "components/table";
+import ClassroomTable from "./ClassroomTable";
 import { useQuery, useLazyQuery } from "@apollo/client";
 import { useDisclosure } from "@chakra-ui/react";
-import { UserForm } from "./userForm";
-import { GET_USERS, GET_USER_BY_ID } from "service/user";
+import  ClassroomForm  from "./ClassroomForm";
 import { Spinner } from "@chakra-ui/react";
-export default function UserPage() {
+import { GET_SUBJECTS, GET_SUBJECT_BY_ID } from "service/subject";
+
+export default function SubjectPage() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isEdit, setIsEdit] = useState(false);
 
   const columns = [
     {
-      Header: "họ và tên",
-      accessor: "fullName",
-    },
-    {
-      Header: "email",
-      accessor: "email",
-    },
-    {
-      Header: "số điện thoại",
-      accessor: "phone",
-    },
-    {
-      Header: "giới tính",
-      accessor: "gender",
-    },
-    {
-      Header: "ngày sinh",
-      accessor: "birthday",
-    },
-    {
-      Header: "địa chỉ",
-      accessor: "address",
-    },
-    {
-      Header: "chức vụ",
-      accessor: "role",
+      Header: "Tên môn học",
+      accessor: "name",
     },
     {
       Header: "",
@@ -45,15 +22,15 @@ export default function UserPage() {
     },
   ];
 
-  const { loading, error, data } = useQuery(GET_USERS);
-  const [getUserById, lazyResults] = useLazyQuery(GET_USER_BY_ID);
+  const { loading, error, data } = useQuery(GET_SUBJECTS);
+  const [getSubjectById, lazyResults] = useLazyQuery(GET_SUBJECT_BY_ID);
 
   if (loading) return <div>loading....</div>;
 
   const openFormAsEdit = async (id: String) => {
     try {
       onOpen();
-      await getUserById({ variables: { _id: id } });
+      await getSubjectById({ variables: { _id: id } });
       setIsEdit(true);
     } catch (error) {
       console.log(error);
@@ -68,22 +45,22 @@ export default function UserPage() {
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
       <Button variant="brand" mb={"10px"} onClick={openFormAsAdd}>
-        Tạo tài khoản
+        Tạo môn học
       </Button>
       <Box>
-        <DataTable
+        <ClassroomTable
           columnsData={columns}
-          tableData={data.users ?? []}
+          tableData={data.subjects ?? []}
           openForm={openFormAsEdit}
         />
       </Box>
       {lazyResults.loading ? (
         <Spinner />
       ) : (
-        <UserForm
+        <ClassroomForm
           isOpen={isOpen}
           onClose={onClose}
-          user={lazyResults?.data?.user}
+          subject={lazyResults?.data?.subject}
           isEdit={isEdit}
         />
       )}

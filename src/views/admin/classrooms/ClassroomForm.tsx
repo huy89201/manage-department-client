@@ -23,7 +23,7 @@ interface Props {
   subject?: any;
 }
 
-export function SubjectForm({ isOpen, onClose, subject, isEdit }: Props) {
+export default function ClassroomForm({ isOpen, onClose, subject, isEdit }: Props) {
 
   const [createSubject] = useMutation(ADD_SUBJECT, {
     refetchQueries: [{ query: GET_SUBJECTS }],
