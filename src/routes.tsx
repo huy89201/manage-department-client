@@ -1,11 +1,5 @@
 import { Icon } from "@chakra-ui/react";
-import {
-  MdBarChart,
-  MdPerson,
-  MdHome,
-  MdLock,
-  MdBook
-} from "react-icons/md";
+import { MdBarChart, MdPerson, MdHome, MdLock, MdBook } from "react-icons/md";
 
 // Admin Imports
 import MainDashboard from "views/admin/default";
@@ -19,6 +13,8 @@ import { UserForm } from "views/admin/user/userForm";
 // Auth Imports
 import SignInCentered from "views/auth/signIn";
 import SubjectPage from "views/admin/subjects";
+import StudentPage from './views/admin/student/index';
+import TeacherPage from './views/admin/teacher/index';
 
 const routes = [
   {
@@ -102,12 +98,26 @@ export const adminRoutes = [
     icon: <Icon as={MdPerson} width="20px" height="20px" color="inherit" />,
     component: Profile,
   },
+  // {
+  //   name: "Quản lý tài khoản",
+  //   layout: "/admin",
+  //   path: "/user",
+  //   icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+  //   component: UserPage,
+  // },
   {
-    name: "Quản lý tài khoản",
+    name: "Quản lý học sinh",
     layout: "/admin",
-    path: "/user",
+    path: "/student",
     icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
-    component: UserPage,
+    component: StudentPage,
+  },
+  {
+    name: "Quản lý giáo viên",
+    layout: "/admin",
+    path: "/teacher",
+    icon: <Icon as={MdHome} width="20px" height="20px" color="inherit" />,
+    component: TeacherPage,
   },
   {
     name: "Quản lý môn học",
