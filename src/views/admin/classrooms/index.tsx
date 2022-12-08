@@ -3,18 +3,35 @@ import { Box, Button } from "@chakra-ui/react";
 import ClassroomTable from "./ClassroomTable";
 import { useQuery, useLazyQuery } from "@apollo/client";
 import { useDisclosure } from "@chakra-ui/react";
-import  ClassroomForm  from "./ClassroomForm";
+import ClassroomForm from "./ClassroomForm";
 import { Spinner } from "@chakra-ui/react";
-import { GET_SUBJECTS, GET_SUBJECT_BY_ID } from "service/subject";
+import { GET_SUBJECT_BY_ID } from "service/subject";
+import { GET_CLASSROOMS } from "service/classroom";
 
-export default function SubjectPage() {
+export default function ClassroomPage() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [isEdit, setIsEdit] = useState(false);
 
   const columns = [
     {
-      Header: "Tên môn học",
-      accessor: "name",
+      Header: "Môn học",
+      accessor: "subject",
+    },
+    {
+      Header: "Giáo viên",
+      accessor: "teacher",
+    },
+    {
+      Header: "Ngày học",
+      accessor: "schedule",
+    },
+    {
+      Header: "Ngày bắt đầu",
+      accessor: "startDate",
+    },
+    {
+      Header: "Ngày kết thúc",
+      accessor: "endDate",
     },
     {
       Header: "",
@@ -22,7 +39,7 @@ export default function SubjectPage() {
     },
   ];
 
-  const { loading, error, data } = useQuery(GET_SUBJECTS);
+  const { loading, error, data } = useQuery(GET_CLASSROOMS);
   const [getSubjectById, lazyResults] = useLazyQuery(GET_SUBJECT_BY_ID);
 
   if (loading) return <div>loading....</div>;
@@ -45,24 +62,18 @@ export default function SubjectPage() {
   return (
     <Box pt={{ base: "130px", md: "80px", xl: "80px" }}>
       <Button variant="brand" mb={"10px"} onClick={openFormAsAdd}>
-        Tạo môn học
+        Tạo lớp học
       </Button>
       <Box>
         <ClassroomTable
           columnsData={columns}
-          tableData={data.subjects ?? []}
-          openForm={openFormAsEdit}
+          tableData={data.classrooms ?? []}
         />
       </Box>
       {lazyResults.loading ? (
         <Spinner />
       ) : (
-        <ClassroomForm
-          isOpen={isOpen}
-          onClose={onClose}
-          subject={lazyResults?.data?.subject}
-          isEdit={isEdit}
-        />
+        <ClassroomForm isOpen={isOpen} onClose={onClose} />
       )}
     </Box>
   );

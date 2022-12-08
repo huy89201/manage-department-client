@@ -1,6 +1,11 @@
-import { useMutation } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { useFormik } from "formik";
 import { ADD_SUBJECT, GET_SUBJECTS, UPDATE_SUBJECT } from "service/subject";
+import {
+  GET_CREATE_CLASS_DATA,
+  GET_CLASSROOMS,
+  ADD_CLASSROOM,
+} from "service/classroom";
 import {
   Modal,
   ModalOverlay,
@@ -13,6 +18,7 @@ import {
   Input,
   FormControl,
   FormLabel,
+  Select,
 } from "@chakra-ui/react";
 
 interface Props {
@@ -23,38 +29,31 @@ interface Props {
   subject?: any;
 }
 
-export default function ClassroomForm({ isOpen, onClose, subject, isEdit }: Props) {
+export default function ClassroomForm({
+  isOpen,
+  onClose,
+}: Props) {
+  const { data } = useQuery(GET_CREATE_CLASS_DATA);
 
-  const [createSubject] = useMutation(ADD_SUBJECT, {
-    refetchQueries: [{ query: GET_SUBJECTS }],
-  });
-
-  const [updateSubject] = useMutation(UPDATE_SUBJECT, {
-    refetchQueries: [{ query: GET_SUBJECTS }],
+  const [createClassroom] = useMutation(ADD_CLASSROOM, {
+    refetchQueries: [{ query: GET_CLASSROOMS }],
   });
 
   const emptyValues = {
-    name: "",
-  };
-
-  const handleInitValuse = () => {
-    if (isEdit) return subject;
-
-    return emptyValues;
+    teacherId: "",
+    subjectId: "",
+    schedule: "",
+    startDate: "",
+    endDate: "",
   };
 
   const formik = useFormik({
-    initialValues: subject || emptyValues,
+    initialValues: emptyValues,
     onSubmit: (values, { resetForm }) => {
-      if (isEdit) {
-        updateSubject({
-          variables: { ...values },
-        });
-      } else {
-        createSubject({
-          variables: { ...values },
-        });
-      }
+      createClassroom({
+        variables: { ...values },
+      });
+
       onClose();
     },
   });
@@ -63,18 +62,65 @@ export default function ClassroomForm({ isOpen, onClose, subject, isEdit }: Prop
     <Modal isOpen={isOpen} onClose={onClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Tạo môn học</ModalHeader>
+        <ModalHeader>Tạo lớp học</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
           <form onSubmit={formik.handleSubmit}>
             <FormControl>
-              <FormLabel>Tên môn học</FormLabel>
+              <FormLabel>Môn học</FormLabel>
+              <Select
+                placeholder="Chọn môn học"
+                id="subjectId"
+                onChange={formik.handleChange}
+                value={formik?.values?.subjectId}
+              >
+                {data?.subjects.map((item: any) => (
+                  <option value={item._id} key={item._id}>
+                    {item.name}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Giáo viên</FormLabel>
+              <Select
+                placeholder="Chọn giáo viên"
+                id="teacherId"
+                onChange={formik.handleChange}
+                value={formik?.values?.teacherId}
+              >
+                {data?.teachers.map((item: any) => (
+                  <option value={item._id} key={item._id}>
+                    {item.fullName}
+                  </option>
+                ))}
+              </Select>
+            </FormControl>
+            <FormControl>
+              <FormLabel>Ngày học</FormLabel>
               <Input
                 type="text"
-                id="name"
-                name="name"
+                id="schedule"
                 onChange={formik.handleChange}
-                value={formik?.values?.name}
+                value={formik?.values?.schedule}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Ngày bắt đầu</FormLabel>
+              <Input
+                type="date"
+                id="startDate"
+                onChange={formik.handleChange}
+                value={formik?.values?.startDate}
+              />
+            </FormControl>
+            <FormControl>
+              <FormLabel>Ngày kết thúc</FormLabel>
+              <Input
+                type="date"
+                id="endDate"
+                onChange={formik.handleChange}
+                value={formik?.values?.endDate}
               />
             </FormControl>
             <ModalFooter>

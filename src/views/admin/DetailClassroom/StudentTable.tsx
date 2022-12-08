@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { MdDelete, MdModeEditOutline } from "react-icons/md";
 import Card from "components/card/Card";
-import { useHistory } from "react-router-dom";
 import { useMutation } from "@apollo/client";
+import { GET_STUDENTS, DELETE_STUDENT } from "../../../service/student";
 import {
   Flex,
   Table,
@@ -21,21 +21,16 @@ import {
   useSortBy,
   useTable,
 } from "react-table";
-import { DELETE_CLASSROOM, GET_CLASSROOMS } from "service/classroom";
 
 function ActionCells(props: { row: any }) {
   const { row } = props;
-  const history = useHistory();
-  const [removeClassroom, { data, loading, error }] = useMutation(
-    DELETE_CLASSROOM,
+
+  const [removeStudent, { data, loading, error }] = useMutation(
+    DELETE_STUDENT,
     {
-      refetchQueries: [{ query: GET_CLASSROOMS }],
+      refetchQueries: [{ query: GET_STUDENTS }],
     }
   );
-
-  const handleOpenForm = () => {
-    history.push(`/admin/detail-classroom-id=${row.original?._id}`);
-  };
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
   return (
@@ -47,7 +42,7 @@ function ActionCells(props: { row: any }) {
           fontSize="sm"
           fontWeight="700"
           onClick={() =>
-            removeClassroom({
+            removeStudent({
               variables: { _id: row.original?._id },
             })
           }
@@ -57,20 +52,15 @@ function ActionCells(props: { row: any }) {
       </Button>
       <Button display="flex" alignItems="center">
         <MdModeEditOutline style={{ color: "green" }} />
-        <Text
-          color={textColor}
-          fontSize="sm"
-          fontWeight="700"
-          onClick={handleOpenForm}
-        >
-          Cập nhật
+        <Text color={textColor} fontSize="sm" fontWeight="700">
+          Cập nhật điểm
         </Text>
       </Button>
     </Flex>
   );
 }
 
-export default function ClassroomTable(props: {
+export default function StudentTable(props: {
   columnsData: any;
   tableData: any;
   title?: string;
@@ -79,7 +69,7 @@ export default function ClassroomTable(props: {
 
   const columns = useMemo(() => columnsData, [columnsData]);
   const data = useMemo(() => tableData, [tableData]);
-
+ 
   const tableInstance = useTable(
     {
       columns,
@@ -160,18 +150,6 @@ export default function ClassroomTable(props: {
                     data = (
                       <Text color={textColor} fontSize="sm" fontWeight="700">
                         {cell.value}
-                      </Text>
-                    );
-                  } else if (cell.column.id === "subject") {
-                    data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
-                        {cell.value.name}
-                      </Text>
-                    );
-                  } else if (cell.column.id === "teacher") {
-                    data = (
-                      <Text color={textColor} fontSize="sm" fontWeight="700">
-                        {cell.value.fullName}
                       </Text>
                     );
                   } else {

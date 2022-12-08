@@ -7,7 +7,7 @@ import Sidebar from "components/sidebar/Sidebar";
 import { SidebarContext } from "contexts/SidebarContext";
 import { useState } from "react";
 import { Redirect, Route, Switch } from "react-router-dom";
-import { adminRoutes } from "routes";
+import { adminRoutes, sidebarRoutes } from "routes";
 
 // Custom Chakra theme
 export default function Dashboard(props: { [x: string]: any }) {
@@ -28,7 +28,7 @@ export default function Dashboard(props: { [x: string]: any }) {
         return routes[i].name;
       }
     }
-    return activeRoute;
+    return "";
   };
   const getActiveNavbar = (routes: RoutesType[]): boolean => {
     let activeNavbar = false;
@@ -77,7 +77,7 @@ export default function Dashboard(props: { [x: string]: any }) {
           setToggleSidebar,
         }}
       >
-        <Sidebar routes={adminRoutes} display="none" {...rest} />
+        <Sidebar routes={sidebarRoutes} display="none" {...rest} />
         <Box
           float="right"
           minHeight="100vh"
