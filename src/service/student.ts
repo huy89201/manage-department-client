@@ -8,7 +8,6 @@ export const GET_STUDENTS = gql`
       fullName
       email
       password
-      role
       address
       phone
       gender
@@ -45,7 +44,6 @@ export const ADD_STUDENT = gql`
     $fullName: String!
     $email: String!
     $password: String!
-    $role: String!
     $address: String
     $phone: String
     $birthday: DateTime
@@ -57,7 +55,6 @@ export const ADD_STUDENT = gql`
         fullName: $fullName
         email: $email
         password: $password
-        role: $role
         address: $address
         phone: $phone
         birthday: $birthday

@@ -3,6 +3,8 @@ import { MdDelete, MdModeEditOutline } from "react-icons/md";
 import Card from "components/card/Card";
 import { useMutation } from "@apollo/client";
 import { GET_STUDENTS, DELETE_STUDENT } from "../../../service/student";
+import ScoreForm from "./ScoreForm";
+import { useDisclosure } from "@chakra-ui/react";
 import {
   Flex,
   Table,
@@ -24,7 +26,7 @@ import {
 
 function ActionCells(props: { row: any }) {
   const { row } = props;
-
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [removeStudent, { data, loading, error }] = useMutation(
     DELETE_STUDENT,
     {
@@ -33,6 +35,7 @@ function ActionCells(props: { row: any }) {
   );
 
   const textColor = useColorModeValue("secondaryGray.900", "white");
+
   return (
     <Flex align="center">
       <Button display="flex" alignItems="center">
@@ -41,21 +44,27 @@ function ActionCells(props: { row: any }) {
           color={textColor}
           fontSize="sm"
           fontWeight="700"
-          onClick={() =>
-            removeStudent({
-              variables: { _id: row.original?._id },
-            })
-          }
+          // onClick={() =>
+          //   removeStudent({
+          //     variables: { _id: row.original?._id },
+          //   })
+          // }
         >
           Xóa
         </Text>
       </Button>
       <Button display="flex" alignItems="center">
         <MdModeEditOutline style={{ color: "green" }} />
-        <Text color={textColor} fontSize="sm" fontWeight="700">
+        <Text color={textColor} fontSize="sm" fontWeight="700" onClick={onOpen}>
           Cập nhật điểm
         </Text>
       </Button>
+      <ScoreForm
+        isOpen={isOpen}
+        onClose={onClose}
+        score={row?.original}
+        // isEdit={isEdit}
+      />
     </Flex>
   );
 }
@@ -68,8 +77,34 @@ export default function StudentTable(props: {
   const { columnsData, tableData, title } = props;
 
   const columns = useMemo(() => columnsData, [columnsData]);
-  const data = useMemo(() => tableData, [tableData]);
- 
+  // const data = useMemo(() => tableData?.students, [tableData?.students]);
+
+  const data = useMemo(() => {
+    let tempData = {} as any;
+    tempData = tableData?.students.map((student: any) => {
+      let tempScore = {} as any;
+      student.scores.forEach((score: any) => {
+        if (
+          score.subjectId === tableData.subject._id &&
+          score.studentId === student._id
+        ) {
+          tempScore = score;
+        }
+      });
+
+      return {
+        ...student,
+        subjectId: tempScore?.subjectId ?? tableData.subject._id,
+        scoreId: tempScore?._id,
+        processScore: tempScore?.processScore,
+        midtermScore: tempScore?.midtermScore,
+        finalScore: tempScore?.finalScore,
+      };
+    });
+
+    return tempData;
+  }, [tableData?.students]);
+
   const tableInstance = useTable(
     {
       columns,

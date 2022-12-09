@@ -36,13 +36,11 @@ export default function StudentTab() {
   ];
 
   if (loading) return <div>loading....</div>;
+  
   return (
     <Box>
       <Box>
-        <StudentTable
-          columnsData={columns}
-          tableData={data.classroom.students ?? []}
-        />
+        <StudentTable columnsData={columns} tableData={data?.classroom ?? []} />
       </Box>
     </Box>
   );

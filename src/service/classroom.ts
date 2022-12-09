@@ -48,6 +48,7 @@ export const GET_CLASSROOM_BY_ID = gql`
         endDate
         createdAt
         updatedAt
+        subjectId
         teacher {
             _id
             fullName
@@ -59,6 +60,14 @@ export const GET_CLASSROOM_BY_ID = gql`
         students {
             _id
             fullName
+            scores {
+              _id
+              subjectId
+              studentId
+              processScore
+              midtermScore
+              finalScore
+          }
         }
     }
   }
